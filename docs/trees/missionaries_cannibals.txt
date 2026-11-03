@@ -1,0 +1,48 @@
+Missionaries & Cannibals — Search Tree (BFS)
+(3,3,1) / MMMCCC <B - *
+├── --1M0C →--> (2,3,0) / MMCCC B> M [X invalid]
+├── --2M0C →--> (1,3,0) / MCCC B> MM [X invalid]
+├── --0M1C →--> (3,2,0) / MMMCC B> C
+│   └── --0M1C ←--> (3,3,1) / MMMCCC <B - [perseritur]
+├── --0M2C →--> (3,1,0) / MMMC B> CC *
+│   ├── --0M1C ←--> (3,2,1) / MMMCC <B C *
+│   │   ├── --1M0C →--> (2,2,0) / MMCC B> MC [perseritur]
+│   │   ├── --2M0C →--> (1,2,0) / MCC B> MMC [X invalid]
+│   │   ├── --0M1C →--> (3,1,0) / MMMC B> CC [perseritur]
+│   │   ├── --0M2C →--> (3,0,0) / MMM B> CCC *
+│   │   │   ├── --0M1C ←--> (3,1,1) / MMMC <B CC *
+│   │   │   │   ├── --1M0C →--> (2,1,0) / MMC B> MCC [X invalid]
+│   │   │   │   ├── --2M0C →--> (1,1,0) / MC B> MMCC *
+│   │   │   │   │   ├── --1M0C ←--> (2,1,1) / MMC <B MCC [X invalid]
+│   │   │   │   │   ├── --2M0C ←--> (3,1,1) / MMMC <B CC [perseritur]
+│   │   │   │   │   ├── --0M1C ←--> (1,2,1) / MCC <B MMC [X invalid]
+│   │   │   │   │   ├── --0M2C ←--> (1,3,1) / MCCC <B MM [X invalid]
+│   │   │   │   │   └── --1M1C ←--> (2,2,1) / MMCC <B MC *
+│   │   │   │   │       ├── --1M0C →--> (1,2,0) / MCC B> MMC [X invalid]
+│   │   │   │   │       ├── --2M0C →--> (0,2,0) / CC B> MMMC *
+│   │   │   │   │       │   ├── --1M0C ←--> (1,2,1) / MCC <B MMC [X invalid]
+│   │   │   │   │       │   ├── --2M0C ←--> (2,2,1) / MMCC <B MC [perseritur]
+│   │   │   │   │       │   ├── --0M1C ←--> (0,3,1) / CCC <B MMM *
+│   │   │   │   │       │   │   ├── --0M1C →--> (0,2,0) / CC B> MMMC [perseritur]
+│   │   │   │   │       │   │   └── --0M2C →--> (0,1,0) / C B> MMMCC *
+│   │   │   │   │       │   │       ├── --1M0C ←--> (1,1,1) / MC <B MMCC *
+│   │   │   │   │       │   │       │   ├── --1M0C →--> (0,1,0) / C B> MMMCC [perseritur]
+│   │   │   │   │       │   │       │   ├── --0M1C →--> (1,0,0) / M B> MMCCC [X invalid]
+│   │   │   │   │       │   │       │   └── --1M1C →--> (0,0,0) / - B> MMMCCC [GOAL]
+│   │   │   │   │       │   │       ├── --2M0C ←--> (2,1,1) / MMC <B MCC [X invalid]
+│   │   │   │   │       │   │       ├── --0M1C ←--> (0,2,1) / CC <B MMMC [...]
+│   │   │   │   │       │   │       ├── --0M2C ←--> (0,3,1) / CCC <B MMM [perseritur]
+│   │   │   │   │       │   │       └── --1M1C ←--> (1,2,1) / MCC <B MMC [X invalid]
+│   │   │   │   │       │   └── --1M1C ←--> (1,3,1) / MCCC <B MM [X invalid]
+│   │   │   │   │       ├── --0M1C →--> (2,1,0) / MMC B> MCC [X invalid]
+│   │   │   │   │       ├── --0M2C →--> (2,0,0) / MM B> MCCC [X invalid]
+│   │   │   │   │       └── --1M1C →--> (1,1,0) / MC B> MMCC [perseritur]
+│   │   │   │   ├── --0M1C →--> (3,0,0) / MMM B> CCC [perseritur]
+│   │   │   │   └── --1M1C →--> (2,0,0) / MM B> MCCC [X invalid]
+│   │   │   └── --0M2C ←--> (3,2,1) / MMMCC <B C [perseritur]
+│   │   └── --1M1C →--> (2,1,0) / MMC B> MCC [X invalid]
+│   └── --0M2C ←--> (3,3,1) / MMMCCC <B - [perseritur]
+└── --1M1C →--> (2,2,0) / MMCC B> MC
+    ├── --1M0C ←--> (3,2,1) / MMMCC <B C [perseritur]
+    ├── --0M1C ←--> (2,3,1) / MMCCC <B M [X invalid]
+    └── --1M1C ←--> (3,3,1) / MMMCCC <B - [perseritur]

@@ -1,0 +1,53 @@
+Rotating Workforce Scheduling — Search Tree (DFS + Backtracking)
+Start / (orar bosh) *
+└── --dita 1--> Hë / P1:D / P2:N / P3:- *
+    └── --dita 2--> Ma / P1:D / P2:N / P3:- *
+        ├── --dita 3--> Më / P1:D / P2:N / P3:- [X invalid]
+        └── --dita 3--> Më / P1:D / P2:- / P3:N *
+            ├── --dita 4--> En / P1:D / P2:N / P3:- [X invalid]
+            ├── --dita 4--> En / P1:D / P2:- / P3:N
+            │   ├── --dita 5--> Pr / P1:D / P2:N / P3:- [X invalid]
+            │   ├── --dita 5--> Pr / P1:D / P2:- / P3:N [X invalid]
+            │   ├── --dita 5--> Pr / P1:N / P2:D / P3:- [X invalid]
+            │   ├── --dita 5--> Pr / P1:N / P2:- / P3:D [X invalid]
+            │   ├── --dita 5--> Pr / P1:- / P2:D / P3:N [X invalid]
+            │   └── --dita 5--> Pr / P1:- / P2:N / P3:D [X invalid]
+            ├── --dita 4--> En / P1:N / P2:D / P3:- [X invalid]
+            ├── --dita 4--> En / P1:N / P2:- / P3:D [X invalid]
+            └── --dita 4--> En / P1:- / P2:D / P3:N *
+                ├── --dita 5--> Pr / P1:D / P2:N / P3:-
+                │   ├── --dita 6--> Sh / P1:D / P2:N / P3:-
+                │   │   ├── --dita 7--> Di / P1:D / P2:N / P3:- [X invalid]
+                │   │   ├── --dita 7--> Di / P1:D / P2:- / P3:N [X invalid]
+                │   │   ├── --dita 7--> Di / P1:N / P2:D / P3:- [X invalid]
+                │   │   ├── --dita 7--> Di / P1:N / P2:- / P3:D [X invalid]
+                │   │   ├── --dita 7--> Di / P1:- / P2:D / P3:N [X invalid]
+                │   │   └── --dita 7--> Di / P1:- / P2:N / P3:D [X invalid]
+                │   ├── --dita 6--> Sh / P1:D / P2:- / P3:N
+                │   │   ├── --dita 7--> Di / P1:D / P2:N / P3:- [X invalid]
+                │   │   ├── --dita 7--> Di / P1:D / P2:- / P3:N [X invalid]
+                │   │   ├── --dita 7--> Di / P1:N / P2:D / P3:- [X invalid]
+                │   │   ├── --dita 7--> Di / P1:N / P2:- / P3:D [X invalid]
+                │   │   ├── --dita 7--> Di / P1:- / P2:D / P3:N [X invalid]
+                │   │   └── --dita 7--> Di / P1:- / P2:N / P3:D [X invalid]
+                │   ├── --dita 6--> Sh / P1:N / P2:D / P3:- [X invalid]
+                │   ├── --dita 6--> Sh / P1:N / P2:- / P3:D
+                │   │   ├── --dita 7--> Di / P1:D / P2:N / P3:- [X invalid]
+                │   │   ├── --dita 7--> Di / P1:D / P2:- / P3:N [X invalid]
+                │   │   ├── --dita 7--> Di / P1:N / P2:D / P3:- [X invalid]
+                │   │   ├── --dita 7--> Di / P1:N / P2:- / P3:D [X invalid]
+                │   │   ├── --dita 7--> Di / P1:- / P2:D / P3:N [X invalid]
+                │   │   └── --dita 7--> Di / P1:- / P2:N / P3:D [X invalid]
+                │   ├── --dita 6--> Sh / P1:- / P2:D / P3:N [X invalid]
+                │   └── --dita 6--> Sh / P1:- / P2:N / P3:D [X invalid]
+                ├── --dita 5--> Pr / P1:D / P2:- / P3:N [X invalid]
+                └── --dita 5--> Pr / P1:N / P2:D / P3:- *
+                    ├── --dita 6--> Sh / P1:D / P2:N / P3:- [X invalid]
+                    ├── --dita 6--> Sh / P1:D / P2:- / P3:N [X invalid]
+                    └── --dita 6--> Sh / P1:N / P2:D / P3:- *
+                        ├── --dita 7--> Di / P1:D / P2:N / P3:- [X invalid]
+                        ├── --dita 7--> Di / P1:D / P2:- / P3:N [X invalid]
+                        ├── --dita 7--> Di / P1:N / P2:D / P3:- [X invalid]
+                        ├── --dita 7--> Di / P1:N / P2:- / P3:D [X invalid]
+                        ├── --dita 7--> Di / P1:- / P2:D / P3:N [X invalid]
+                        └── --dita 7--> Di / P1:- / P2:N / P3:D [GOAL]
