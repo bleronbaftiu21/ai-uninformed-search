@@ -31,6 +31,55 @@ python 4_search_trees.py          # printon të tri pemët
 | **Latin Square** | `n ≤ 6` zgjidhet nën 2 s; n = 5 me 4 914 nyje në 17 iteracione IDDFS. |
 | **Search Trees** | 8-Puzzle: R → D → R (3 lëvizje). M&C: 11 kalime. RWS: orar 3-javor që respekton të gjitha kufizimet. |
 
+## Search Tree: shembull
+
+Pema e kërkimit për **8-Puzzle** (BFS, thellësia 3). Rruga blu është zgjidhja **R → D → R**. Të tri pemët (8-Puzzle, Missionaries & Cannibals, Rotating Workforce) janë te [docs/4_search_trees.md](docs/4_search_trees.md).
+
+```mermaid
+flowchart TD
+    n0["1 2 3<br/>_ 4 6<br/>7 5 8"]
+    n1["_ 2 3<br/>1 4 6<br/>7 5 8"]
+    n2["1 2 3<br/>7 4 6<br/>_ 5 8"]
+    n3["1 2 3<br/>4 _ 6<br/>7 5 8"]
+    n4["2 _ 3<br/>1 4 6<br/>7 5 8"]
+    n5["1 2 3<br/>7 4 6<br/>5 _ 8"]
+    n6["1 _ 3<br/>4 2 6<br/>7 5 8"]
+    n7["1 2 3<br/>4 5 6<br/>7 _ 8"]
+    n8["1 2 3<br/>4 6 _<br/>7 5 8"]
+    n9["2 4 3<br/>1 _ 6<br/>7 5 8"]
+    n10["2 3 _<br/>1 4 6<br/>7 5 8"]
+    n11["1 2 3<br/>7 _ 6<br/>5 4 8"]
+    n12["1 2 3<br/>7 4 6<br/>5 8 _"]
+    n13["_ 1 3<br/>4 2 6<br/>7 5 8"]
+    n14["1 3 _<br/>4 2 6<br/>7 5 8"]
+    n15["1 2 3<br/>4 5 6<br/>_ 7 8"]
+    n16["1 2 3<br/>4 5 6<br/>7 8 _<br/>GOAL"]
+    n17["1 2 _<br/>4 6 3<br/>7 5 8"]
+    n18["1 2 3<br/>4 6 8<br/>7 5 _"]
+    n0 -->|U| n1
+    n0 -->|D| n2
+    n0 ==>|R| n3
+    n1 -->|R| n4
+    n2 -->|R| n5
+    n3 -->|U| n6
+    n3 ==>|D| n7
+    n3 -->|R| n8
+    n4 -->|D| n9
+    n4 -->|R| n10
+    n5 -->|U| n11
+    n5 -->|R| n12
+    n6 -->|L| n13
+    n6 -->|R| n14
+    n7 -->|L| n15
+    n7 ==>|R| n16
+    n8 -->|U| n17
+    n8 -->|D| n18
+    classDef goal fill:#c8f0c8,stroke:#1e7b1e,stroke-width:3px,color:#000
+    classDef path fill:#dcebff,stroke:#1f5fbf,stroke-width:3px,color:#000
+    class n16 goal
+    class n0,n3,n7 path
+```
+
 ## Krahasimi i algoritmeve
 
 | Algoritmi | Memoria | Complete | Optimal | Ku duket dobësia |
