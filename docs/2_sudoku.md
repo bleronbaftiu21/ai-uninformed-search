@@ -104,12 +104,3 @@ Të 9 enigmat zgjidhen me `f = 0`, gjithsej për rreth 2–3 sekonda.
 
 **Frontier max** tregon sa gjendje mban BFS njëkohësisht në memorie, dhe kjo rritet shpejt te enigmat e vështira.
 
-## 2.8 Pyetje të mundshme
-
-**Pse BFS dhe jo DFS?** Detyra kërkon BFS. Te Sudoku zgjidhja është gjithmonë në të njëjtën thellësi, prandaj DFS do të ishte më efikas në memorie. BFS e tregon qartë koston e kërkimit nivel pas niveli.
-
-**A është MRV heuristikë, e kështu kërkim i informuar?** MRV është heuristikë për **renditjen e variablave**, jo heuristikë `h(n)` që vlerëson distancën deri te qëllimi. Radha mbetet FIFO, kështu që algoritmi mbetet BFS. Kërkim i informuar do të ishte nëse radha renditej sipas `h(n)`, si te Greedy ose A*.
-
-**Ku është backtracking-u në kod?** Kur `vlerat` është listë bosh, cikli `for d in vlerat` nuk shton asgjë në radhë, dhe dega braktiset.
-
-**Çka ndodh me memorien?** Çdo gjendje në radhë është string me 81 karaktere. Te Hard #3 radha arrin 908 gjendje njëkohësisht, ndërsa pa MRV do të arrinte miliona.

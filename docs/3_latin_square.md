@@ -117,15 +117,3 @@ Te Latin Square **të gjitha zgjidhjet janë në të njëjtën thellësi** (`d =
 Ky është kompromisi i IDDFS: shkëlqen kur **nuk e dimë** thellësinë e zgjidhjes. Këtu thellësia dihet (`(n−1)²`), prandaj DFS i thjeshtë do të ishte më i shpejtë. Por detyra kërkon IDDFS, dhe rezultatet e tregojnë qartë këtë kosto.
 
 Për `n ≥ 7` numri i katrorëve të reduktuar (≈ 1.7 × 10^7) e bën iteracionin e parafundit shumë të gjatë.
-
-## 3.8 Pyetje të mundshme
-
-**Dallimi mes DFS, DLS dhe IDDFS?** DFS shkon pa kufi në thellësi. DLS është DFS që ndalet te një kufi i caktuar. IDDFS e thërret DLS me kufi 0, 1, 2, ... derisa të gjejë zgjidhjen.
-
-**Pse IDDFS nuk harxhon shumë memorie si BFS?** Sepse çdo iteracion është DFS, që mban vetëm rrugën aktuale: `O(d)`.
-
-**A nuk është humbje kohe që rivizitohen nivelet?** Në pemët e zakonshme jo shumë, sepse niveli i fundit ka më shumë nyje se të gjitha nivelet e sipërme bashkë. Këtu po, sepse zgjidhja është gjithmonë në nivelin më të thellë, siç e tregon tabela më sipër.
-
-**Ku është backtracking-u?** `grid[r][c] = 0` pasi `dls(...)` kthen `False`.
-
-**Ku është pruning-u?** `if v in grid[r] or any(grid[i][c] == v ...): continue`.

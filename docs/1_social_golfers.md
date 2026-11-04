@@ -159,12 +159,3 @@ Java 5: {0,7,9,14}  {1,6,8,15}   {2,5,11,12}  {3,4,10,13}   {16,23,25,30} {17,22
 
 Gabimi ndodh që në **javën 2**, por DFS e zbulon vetëm në **javën 6**. Para se të kthehet deri te java 2, duhet t'i provojë të gjitha kombinimet e javëve 3, 4 dhe 5, që janë miliona. Ky fenomen quhet **thrashing** dhe është kufizimi kryesor i backtracking-ut kronologjik. Për 6–10 javë nevojiten teknika më të fuqishme (constraint propagation, local search, konstruksione matematikore), që janë jashtë kërkimit të painformuar.
 
-## 1.9 Pyetje të mundshme
-
-**Pse DFS e jo BFS?** Të gjitha zgjidhjet janë në të njëjtën thellësi (`32·w`), prandaj BFS nuk ka përparësi. Do të duhej të mbante në memorie të gjitha gjendjet e një niveli, që janë miliarda, ndërsa DFS mban vetëm rrugën aktuale.
-
-**A është DFS complete?** Këtu po: hapësira është e fundme, dhe DFS i provon sistematikisht të gjitha mundësitë. Nëse zgjidhja ekziston, e gjen (me kohë të pakufizuar).
-
-**Ku është backtracking-u në kod?** Rreshtat `grp.pop()` dhe `takuar[...].discard(v)` e zhbëjnë vendosjen pasi `dfs(pos + 1)` kthen `False`.
-
-**Ku është pruning-u?** `if v in luan or takuar[v] & set(grp): continue`: kandidati që shkel C1 ose C2 nuk provohet.

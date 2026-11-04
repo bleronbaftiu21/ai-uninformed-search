@@ -339,13 +339,3 @@ Java 1: D D D D - D D
 Java 2: N N - N N - N
 Java 3: - - N - D N -
 ```
-
-## 4.4 Pyetje të mundshme
-
-**Çka është search tree, dhe si dallon nga state space?** State space është bashkësia e të gjitha gjendjeve. Search tree është mënyra si një algoritëm i viziton ato, ku e njëjta gjendje mund të paraqitet disa herë (prandaj ka nyje `[përsëritur]`).
-
-**Pse BFS për 8-Puzzle dhe M&C?** BFS gjen zgjidhjen me më pak hapa (optimale), sepse çdo veprim kushton 1.
-
-**Pse DFS për Rotating Workforce?** Të gjitha zgjidhjet janë në thellësinë 7 (7 ditë), prandaj DFS + backtracking është më efikas.
-
-**Pse 8-Puzzle ka vetëm 181 440 gjendje dhe jo 9! = 362 880?** Gjysma e renditjeve nuk mund të arrihen me lëvizje të ligjshme (varet nga pariteti i numrit të inversioneve).
