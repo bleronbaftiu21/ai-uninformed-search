@@ -1,125 +1,131 @@
 # 3. Latin Square — IDDFS + Backtracking
 
-> Kodi: [`ai_search/latin_square/solver.py`](../ai_search/latin_square/solver.py)
+> Kodi: [`3_latin_square.py`](../3_latin_square.py)
 
 ## 3.1 Përshkrimi
 
-Një **Latin Square** është grid `n × n` i mbushur me `n` numra të ndryshëm, ku secili paraqitet saktësisht një herë në çdo rresht dhe në çdo kolonë. Për hyrjen `n` duhet të printohet një matricë e tillë me numrat `1..n`.
+Një **Latin Square** është grid `n × n`, i mbushur me numrat `1..n`, ku secili numër paraqitet saktësisht një herë në çdo rresht dhe në çdo kolonë. Për hyrjen `n` printohet një matricë e tillë.
 
 ```
-Hyrja: 5            Dalja (IDDFS, forma e reduktuar):
-                    1 2 3 4 5
-                    2 1 4 5 3
-                    3 4 5 1 2
-                    4 5 2 3 1
-                    5 3 1 2 4
+Hyrja: 5
+Dalja:
+1 2 3 4 5
+2 1 4 5 3
+3 4 5 1 2
+4 5 2 3 1
+5 3 1 2 4
 ```
+
+> Dalja ndryshon nga shembulli i detyrës (`5 1 2 3 4 / 4 5 1 2 3 / ...`), por është po aq e saktë: një `n` ka shumë Latin Squares të vlefshme. IDDFS kthen të parën që gjen.
 
 ## 3.2 Modelimi
 
 | Elementi | Përkufizimi |
 |---|---|
-| **Gjendja** | Grid `n × n` i pjesshëm (`0` = qelizë bosh) |
-| **Gjendja fillestare** | Grid bosh, ose me rreshtin/kolonën e parë të fiksuar (forma e reduktuar) |
-| **Veprimi** | Vendos vlerën `v ∈ {1..n}` në qelizën e radhës bosh (renditje row-major) |
+| **Gjendja** | Grid `n × n` i plotësuar pjesërisht (`0` = bosh) |
+| **Gjendja fillestare** | Rreshti i parë dhe kolona e parë = `1, 2, ..., n`, pjesa tjetër bosh |
+| **Veprimi** | Vendos vlerën `v ∈ {1..n}` në qelizën e radhës bosh (rresht pas rreshti) |
 | **Goal test** | Të gjitha qelizat janë mbushur |
-| **Thellësia e zgjidhjes** | `d = n²` (full) ose `d = (n−1)²` (reduced) |
+| **Thellësia e zgjidhjes** | `d = (n − 1)²` (numri i qelizave bosh) |
 
 ## 3.3 Reprezentimi
 
-**Variablat**: `X[r][c]`, `0 ≤ r, c < n` → `n²` variabla.
+**Variablat:** `X[r][c]`, `0 ≤ r, c < n`, gjithsej `n²` variabla, prej të cilave `(n−1)²` janë të lira.
 
-**Domain-i**: `D = {1, 2, ..., n}`.
+**Domain-i:** `D = {1, ..., n}`.
 
-**Kufizimet**:
+**Kufizimet:**
 
-| | Kufizimi |
-|---|---|
-| C1 | `AllDifferent(X[r][0..n−1])` për çdo rresht `r` |
-| C2 | `AllDifferent(X[0..n−1][c])` për çdo kolonë `c` |
+| | Kufizimi | Në kod |
+|---|---|---|
+| C1 | Çdo vlerë një herë në çdo rresht | `v in grid[r]` |
+| C2 | Çdo vlerë një herë në çdo kolonë | `any(grid[i][c] == v ...)` |
 
-**Symmetry breaking – forma e reduktuar** (`reduced=True`, default): rreshti i parë dhe kolona e parë fiksohen në `1, 2, ..., n`. Çdo Latin Square mund të shndërrohet në këtë formë duke ndërruar kolonat dhe pastaj rreshtat, kështu që asnjë zgjidhje nuk humbet (deri në izomorfizëm), por mbeten vetëm `(n−1)²` variabla të lira.
-
-Kontrolli i kufizimeve bëhet me **bitmask**: `row_used[r]` dhe `col_used[c]` – vlera `v` lejohet vetëm nëse biti `v` nuk është i ndezur në asnjërin.
+**Symmetry breaking: forma e reduktuar.** Rreshti i parë dhe kolona e parë fiksohen në `1, 2, ..., n`. Çdo Latin Square mund të shndërrohet në këtë formë duke i ndërruar kolonat dhe rreshtat, prandaj nuk humbet asnjë zgjidhje, por hapësira zvogëlohet shumë (te n = 5, nga 25 në 16 qeliza të lira).
 
 ## 3.4 Objective function
 
 Problem **minimizimi**:
 
 ```
-f(X) = Σ_r (vlera të përsëritura në rreshtin r) + Σ_c (vlera të përsëritura në kolonën c) + (qeliza bosh)
+f(X) = Σ_rreshta (vlera të përsëritura) + Σ_kolona (vlera të përsëritura) + (qeliza bosh)
 ```
 
-* `f(X) = 0` ⇔ `X` është Latin Square i vlefshëm.
-* Shembull: `[[1,1],[0,2]]` → 1 konflikt në rresht + 1 qelizë bosh → `f = 2`.
+- `[[1,1],[0,2]]` → 1 përsëritje në rreshtin e parë + 1 qelizë bosh → `f = 2`
+- **`f(X) = 0` ⇔ `X` është Latin Square i vlefshëm**
 
 ## 3.5 Landscape
 
-| n | Pa kufizime `n^(n²)` | Reduced `n^((n−1)²)` | Latin Squares të vlefshme | Të reduktuara |
-|---:|---:|---:|---:|---:|
-| 3 | 19 683 | 81 | 12 | 1 |
-| 4 | ≈ 4.29 × 10^9 | 262 144 | 576 | 4 |
-| 5 | ≈ 2.98 × 10^17 | ≈ 1.52 × 10^11 | 161 280 | 56 |
-| 6 | ≈ 1.03 × 10^28 | ≈ 2.84 × 10^19 | 812 851 200 | 9 408 |
-| 7 | ≈ 2.56 × 10^41 | ≈ 2.65 × 10^30 | ≈ 6.15 × 10^13 | 16 942 080 |
+| n | Pa kufizime `n^(n²)` | Forma e reduktuar `n^((n−1)²)` | Latin Squares të vlefshme |
+|---:|---:|---:|---:|
+| 3 | 19 683 | 81 | 12 |
+| 4 | ≈ 4.3 × 10^9 | 262 144 | 576 |
+| 5 | ≈ 3.0 × 10^17 | ≈ 1.5 × 10^11 | 161 280 |
+| 6 | ≈ 1.0 × 10^28 | ≈ 2.8 × 10^19 | 812 851 200 |
 
-Problemi **ka gjithmonë zgjidhje** për çdo `n ≥ 1` – p.sh. konstruksioni ciklik `L[r][c] = (c − r − 1) mod n + 1` jep pikërisht shembullin e detyrës (`5 1 2 3 4 / 4 5 1 2 3 / ...`). Në kod ky konstruksion (`cyclic_construction`) përdoret vetëm për krahasim dhe teste.
+Problemi ka **gjithmonë zgjidhje** për çdo `n ≥ 1`. P.sh. zhvendosja ciklike e rreshtit të parë e jep gjithmonë një Latin Square, si te shembulli i detyrës.
 
 ## 3.6 Algoritmi: IDDFS + Backtracking
 
 ```
 IDDFS():
-    for L = 0, 1, 2, ..., d:                      # rrit kufirin e thellësisë
-        if DLS(0, L): return SUCCESS
+    for kufiri = 0, 1, 2, ..., d:             # rrit kufirin e thellësisë
+        if DLS(0, kufiri): return SUCCESS
 
-DLS(depth, L):                                    # Depth-Limited Search
-    if depth == d: return SUCCESS                 # goal test
-    if depth == L: return CUTOFF
-    (r, c) ← qeliza bosh nr. depth
+DLS(thellesia, kufiri):                       # Depth-Limited Search
+    if thellesia == d:      return TRUE        # GOAL
+    if thellesia == kufiri: return FALSE       # cutoff
+    (r, c) ← qeliza bosh nr. thellesia
     for v in 1..n:
-        if v në rreshtin r ose kolonën c: prune   # BACKTRACKING
+        if v në rreshtin r ose kolonën c: prune
         vendos v
-        if DLS(depth + 1, L): return SUCCESS
-        hiq v                                     # zhbëj veprimin
-    return FAIL
+        if DLS(thellesia + 1, kufiri): return TRUE
+        hiq v                                  # BACKTRACK
+    return FALSE
 ```
 
-**Vetitë e IDDFS**: complete, optimal (gjen zgjidhjen më të cekët), memoria **O(b·d)** si DFS – por i ri-viziton nivelet e sipërme në çdo iteracion.
+**IDDFS** = DFS i përsëritur me kufi thellësie që rritet: 0, 1, 2, ... Në çdo iteracion bëhet një DFS i plotë deri te kufiri.
 
-### Vërejtje e rëndësishme për këtë problem
-
-Te Latin Square të gjitha zgjidhjet janë në të njëjtën thellësi `d`. Prandaj iteracionet `L < d` nuk mund ta gjejnë kurrë zgjidhjen dhe i eksplorojnë **plotësisht** të gjitha gjendjet e qëndrueshme deri në thellësinë `L`. Iteracioni i fundit (`L = d`) e gjen zgjidhjen shumë shpejt (p.sh. 29 nyje për n = 5).
-
-Nyjet e zgjeruara për çdo iteracion (n = 5, reduced):
-
-```
-L:      0  1  2   3   4   5    6    7    8    9   10   11   12   13   14   15  16
-nyje:   1  5  14  28  39  64  125  201  247  323  433  569  625  681  737  793  29
-```
-
-Kjo tregon qartë koston e IDDFS: puna dominohet nga iteracionet që "nuk mund të fitojnë". IDDFS shkëlqen kur thellësia e zgjidhjes **nuk dihet**; këtu dihet (`d = (n−1)²`), prandaj DFS i thjeshtë do të ishte më efikas – por detyra kërkon IDDFS, dhe rezultatet e dokumentojnë këtë kompromis.
+**Vetitë:**
+- **Memoria `O(d)`**, si DFS, sepse ruhet vetëm rruga aktuale
+- **Complete dhe optimal**, si BFS, sepse gjen zgjidhjen më të cekët
+- **Kostoja:** nivelet e sipërme rivizitohen në çdo iteracion
 
 ## 3.7 Rezultatet
 
-| n | Modeli | Iteracione | Nyje të zgjeruara | Koha (s) |
-|---|--------|-----------:|------------------:|---------:|
-| 2 | reduced | 2 | 3 | 0.000 |
-| 2 | full | 5 | 21 | 0.000 |
-| 3 | reduced | 5 | 19 | 0.000 |
-| 3 | full | 10 | 326 | 0.000 |
-| 4 | reduced | 10 | 161 | 0.000 |
-| 4 | full | 17 | 24 861 | 0.015 |
-| 5 | reduced | 17 | 4 914 | 0.004 |
-| 5 | full | 26 | 13 505 923 | 10.08 |
-| 6 | reduced | 26 | 1 194 077 | 0.98 |
-| 7 | reduced | 21+ | > 40 000 000 | > 30 (timeout) |
+| n | Iteracione | Nyje gjithsej | Koha |
+|---:|---:|---:|---:|
+| 1 | 1 | 1 | 0 s |
+| 2 | 2 | 3 | 0 s |
+| 3 | 5 | 19 | 0 s |
+| 4 | 10 | 161 | 0 s |
+| 5 | 17 | 4 914 | < 0.1 s |
+| 6 | 26 | 1 194 077 | ≈ 1.5 s |
+| 7 | – | – | nuk përfundon brenda 30 s |
 
-**Përfundimi**: symmetry breaking është vendimtar – për n = 5 zvogëlon punën nga 13.5 milionë në 4 914 nyje (≈ 2 750× më pak). Me IDDFS, `n ≤ 6` zgjidhet nën 1 sekondë; për `n ≥ 7` numri i katrorëve të reduktuar (≈ 1.7 × 10^7) e bën iteracionin e parafundit shumë të shtrenjtë në Python.
+**Nyjet për çdo iteracion (n = 5):**
 
-## 3.8 Ekzekutimi
-
-```bash
-python main.py latin --n 5                  # forma e reduktuar (default)
-python main.py latin --n 4 --full           # modeli i plotë, pa symmetry breaking
-python main.py latin --n 7 --time-limit 30  # demonstron kufirin e IDDFS
 ```
+kufiri: 0  1   2   3   4   5    6    7    8    9   10   11   12   13   14   15  16
+nyje:   1  5  14  28  39  64  125  201  247  323  433  569  625  681  737  793  29
+```
+
+### Çka tregon kjo tabelë
+
+Te Latin Square **të gjitha zgjidhjet janë në të njëjtën thellësi** (`d = 16` për n = 5). Prandaj iteracionet me kufi `< 16` **nuk mund ta gjejnë kurrë** zgjidhjen dhe e eksplorojnë plotësisht pemën deri te kufiri. Iteracioni i fundit e gjen zgjidhjen me vetëm **29 nyje**, ndërsa iteracionet e mëparshme harxhojnë **4 885**.
+
+Ky është kompromisi i IDDFS: shkëlqen kur **nuk e dimë** thellësinë e zgjidhjes. Këtu thellësia dihet (`(n−1)²`), prandaj DFS i thjeshtë do të ishte më i shpejtë. Por detyra kërkon IDDFS, dhe rezultatet e tregojnë qartë këtë kosto.
+
+Për `n ≥ 7` numri i katrorëve të reduktuar (≈ 1.7 × 10^7) e bën iteracionin e parafundit shumë të gjatë.
+
+## 3.8 Pyetje të mundshme
+
+**Dallimi mes DFS, DLS dhe IDDFS?** DFS shkon pa kufi në thellësi. DLS është DFS që ndalet te një kufi i caktuar. IDDFS e thërret DLS me kufi 0, 1, 2, ... derisa të gjejë zgjidhjen.
+
+**Pse IDDFS nuk harxhon shumë memorie si BFS?** Sepse çdo iteracion është DFS, që mban vetëm rrugën aktuale: `O(d)`.
+
+**A nuk është humbje kohe që rivizitohen nivelet?** Në pemët e zakonshme jo shumë, sepse niveli i fundit ka më shumë nyje se të gjitha nivelet e sipërme bashkë. Këtu po, sepse zgjidhja është gjithmonë në nivelin më të thellë, siç e tregon tabela më sipër.
+
+**Ku është backtracking-u?** `grid[r][c] = 0` pasi `dls(...)` kthen `False`.
+
+**Ku është pruning-u?** `if v in grid[r] or any(grid[i][c] == v ...): continue`.

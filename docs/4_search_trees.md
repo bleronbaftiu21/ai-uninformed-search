@@ -1,18 +1,21 @@
 # 4. Search Trees
 
-> Kodi: [`ai_search/search_trees/`](../ai_search/search_trees/) · Figurat: [`docs/trees/`](trees/)
+> Kodi: [`4_search_trees.py`](../4_search_trees.py)
 
-Një **search tree** paraqet si kërkimi i eksploron gjendjet: rrënja është gjendja fillestare, çdo degë është një veprim dhe çdo nyje-fëmijë është gjendja që del pas atij veprimi. Pemët gjenerohen automatikisht me `python main.py trees` dhe ruhen si `.png` (Graphviz), `.dot` dhe `.txt`.
+Një **search tree** tregon si kërkimi i eksploron gjendjet:
+- **rrënja** = gjendja fillestare
+- **çdo degë** = një veprim (shënohet si `--veprimi-->`)
+- **çdo nyje-fëmijë** = gjendja që del pas atij veprimi
 
-**Legjenda e ngjyrave**
+Shenjat në pemë:
 
-| Ngjyra | Kuptimi |
+| Shenja | Kuptimi |
 |---|---|
-| 🟦 blu (kornizë e trashë) | Rruga nga rrënja te qëllimi |
-| 🟩 jeshile | Gjendja qëllim (goal) |
-| 🟥 e kuqe | Gjendje që shkel kufizimet – prerë nga backtracking |
-| ⬜ gri | Gjendje e përsëritur – nuk zgjerohet |
-| 🟨 e verdhë | Frontier – e gjeneruar por e pazgjeruar (kufiri i thellësisë / kërkimi u ndal) |
+| `[GOAL]` | Gjendja qëllim |
+| `[përsëritur]` | Gjendje që është parë më herët, prandaj nuk zgjerohet më |
+| `[X]` | Gjendje që shkel kufizimet, prerë nga backtracking-u |
+
+Funksioni `printo()` e vizaton pemën rekursivisht: për çdo nyje printon etiketën dhe pastaj fëmijët e saj me `├──` dhe `└──`.
 
 ---
 
@@ -20,16 +23,38 @@ Një **search tree** paraqet si kërkimi i eksploron gjendjet: rrënja është g
 
 | Elementi | Përkufizimi |
 |---|---|
-| Gjendja | Pozita e 8 pllakave dhe vendit bosh `_` në grid 3 × 3 |
-| Fillimi | `1 2 3 / _ 4 6 / 7 5 8` |
-| Qëllimi | `1 2 3 / 4 5 6 / 7 8 _` |
-| Veprimet | Lëviz vendin bosh: **U** (lart), **D** (poshtë), **L** (majtas), **R** (djathtas) |
-| Kostoja | 1 për lëvizje |
-| Landscape | `9!/2 = 181 440` gjendje të arritshme; faktori i degëzimit 2–4 (mesatarisht ≈ 2.67) |
+| **Gjendja** | String me 9 karaktere, rresht pas rreshti; `0` = vendi bosh |
+| **Fillimi** | `123046758`, pra `1 2 3 / _ 4 6 / 7 5 8` |
+| **Qëllimi** | `123456780`, pra `1 2 3 / 4 5 6 / 7 8 _` |
+| **Veprimet** | Lëviz vendin bosh: **U** (lart), **D** (poshtë), **L** (majtas), **R** (djathtas) |
+| **Kostoja** | 1 për lëvizje |
+| **Landscape** | `9! / 2 = 181 440` gjendje të arritshme; faktori i degëzimit 2–4 |
 
-Pema ndërtohet me **BFS deri në thellësinë 3**. Lëvizja që e zhbën lëvizjen e mëparshme (p.sh. `U` pas `D`) nuk gjenerohet. Zgjidhja optimale: **R → D → R** (3 lëvizje). Kodi kontrollon edhe zgjidhshmërinë (numri i inversioneve duhet të jetë çift).
+Pema ndërtohet me **BFS deri në thellësinë 3**. Lëvizja që e zhbën lëvizjen e mëparshme (p.sh. `D` pas `U`) nuk gjenerohet, që pema të mos ketë gjendje të kota.
 
-![8-Puzzle search tree](trees/eight_puzzle.png)
+```
+123046758
+├── --U--> 023146758
+│   └── --R--> 203146758
+│       ├── --D--> 243106758
+│       └── --R--> 230146758
+├── --D--> 123746058
+│   └── --R--> 123746508
+│       ├── --U--> 123706548
+│       └── --R--> 123746580
+└── --R--> 123406758
+    ├── --U--> 103426758
+    │   ├── --L--> 013426758
+    │   └── --R--> 130426758
+    ├── --D--> 123456708
+    │   ├── --L--> 123456078
+    │   └── --R--> 123456780 [GOAL]
+    └── --R--> 123460758
+        ├── --U--> 120463758
+        └── --D--> 123468750
+```
+
+**Zgjidhja optimale:** R → D → R (3 lëvizje).
 
 ---
 
@@ -37,64 +62,116 @@ Pema ndërtohet me **BFS deri në thellësinë 3**. Lëvizja që e zhbën lëviz
 
 | Elementi | Përkufizimi |
 |---|---|
-| Gjendja | `(M, C, B)` – misionarë dhe kanibalë në bregun e majtë; `B = 1` varka majtas |
-| Fillimi / Qëllimi | `(3, 3, 1)` → `(0, 0, 0)` |
-| Veprimet | Varka bart `(m, c) ∈ {(1,0), (2,0), (0,1), (0,2), (1,1)}` |
-| Kufizimi | Në asnjë breg misionarët (nëse > 0) nuk mund të jenë më pak se kanibalët |
-| Landscape | `4 × 4 × 2 = 32` gjendje teorike, prej të cilave 20 të vlefshme dhe 16 të arritshme nga fillimi |
+| **Gjendja** | `(M, C, B)`: misionarë dhe kanibalë në bregun e majtë; `B = 1` kur varka është majtas |
+| **Fillimi → Qëllimi** | `(3, 3, 1)` → `(0, 0, 0)` |
+| **Veprimet** | Varka bart `(m, c) ∈ {(1,0), (2,0), (0,1), (0,2), (1,1)}`, shënuar si `1M0C`, `0M2C` etj. |
+| **Kufizimi** | Në asnjë breg misionarët (nëse ka) nuk mund të jenë më pak se kanibalët (`mc_valid`) |
+| **Landscape** | `4 × 4 × 2 = 32` gjendje teorike, 20 të vlefshme, 16 të arritshme nga fillimi |
 
-Pema ndërtohet me **BFS**. Gjendjet që shkelin kufizimin shfaqen me të kuqe, ndërsa ato të vizituara më parë me gri. Zgjidhja optimale ka **11 kalime**:
+Pema ndërtohet me **BFS**. Gjendjet që shkelin kufizimin preren dhe nuk shfaqen. Gjendjet që janë parë më herët shënohen `[përsëritur]` dhe nuk zgjerohen.
+
+```
+(3, 3, 1)
+├── --0M1C--> (3, 2, 0)
+│   └── --0M1C--> (3, 3, 1) [përsëritur]
+├── --0M2C--> (3, 1, 0)
+│   ├── --0M1C--> (3, 2, 1)
+│   │   ├── --1M0C--> (2, 2, 0) [përsëritur]
+│   │   ├── --0M1C--> (3, 1, 0) [përsëritur]
+│   │   └── --0M2C--> (3, 0, 0)
+│   │       ├── --0M1C--> (3, 1, 1)
+│   │       │   ├── --2M0C--> (1, 1, 0)
+│   │       │   │   ├── --2M0C--> (3, 1, 1) [përsëritur]
+│   │       │   │   └── --1M1C--> (2, 2, 1)
+│   │       │   │       ├── --2M0C--> (0, 2, 0)
+│   │       │   │       │   ├── --2M0C--> (2, 2, 1) [përsëritur]
+│   │       │   │       │   └── --0M1C--> (0, 3, 1)
+│   │       │   │       │       ├── --0M1C--> (0, 2, 0) [përsëritur]
+│   │       │   │       │       └── --0M2C--> (0, 1, 0)
+│   │       │   │       │           ├── --1M0C--> (1, 1, 1)
+│   │       │   │       │           │   ├── --1M0C--> (0, 1, 0) [përsëritur]
+│   │       │   │       │           │   └── --1M1C--> (0, 0, 0) [GOAL]
+│   │       │   │       │           ├── --0M1C--> (0, 2, 1)
+│   │       │   │       │           │   ├── --0M1C--> (0, 1, 0) [përsëritur]
+│   │       │   │       │           │   └── --0M2C--> (0, 0, 0) [GOAL]
+│   │       │   │       │           └── --0M2C--> (0, 3, 1) [përsëritur]
+│   │       │   │       └── --1M1C--> (1, 1, 0) [përsëritur]
+│   │       │   └── --0M1C--> (3, 0, 0) [përsëritur]
+│   │       └── --0M2C--> (3, 2, 1) [përsëritur]
+│   └── --0M2C--> (3, 3, 1) [përsëritur]
+└── --1M1C--> (2, 2, 0)
+    ├── --1M0C--> (3, 2, 1) [përsëritur]
+    └── --1M1C--> (3, 3, 1) [përsëritur]
+```
+
+**Zgjidhja optimale ka 11 kalime.** Pema tregon dy rrugë të ndryshme me gjatësi 11, që ndryshojnë vetëm në dy kalimet e fundit:
 
 ```
 (3,3,1) → (3,1,0) → (3,2,1) → (3,0,0) → (3,1,1) → (1,1,0) → (2,2,1)
         → (0,2,0) → (0,3,1) → (0,1,0) → (1,1,1) → (0,0,0)
 ```
 
-![Missionaries and Cannibals search tree](trees/missionaries_cannibals.png)
-
 ---
 
-## 4.3 Rotating Workforce Scheduling (RWS)
+## 4.3 Rotating Workforce Scheduling
 
-Instanca e vogël (që pema të jetë e lexueshme):
+Instanca e vogël, që pema të jetë e lexueshme:
 
-* **3 punëtorë**, cikël **3-javor** – orari është matricë 3 × 7; punëtori që e fillon javën në rreshtin 1 kalon në rreshtin 2 javën tjetër, etj. (orari lexohet si varg ciklik me 21 ditë).
-* **Ndërrimet**: `D` (ditë), `N` (natë), `-` (pushim).
+- **3 punëtorë**, cikël **3-javor**: orari është matricë 3 × 7. Punëtori që e fillon në rreshtin 1 kalon në rreshtin 2 javën tjetër, pastaj në rreshtin 3, pastaj prapë në 1. Prandaj orari lexohet si një varg ciklik me 21 ditë.
+- **Ndërrimet:** `D` (ditë), `N` (natë), `-` (pushim).
 
-| | Kufizimi |
-|---|---|
-| C1 | Kërkesa ditore: çdo ditë 1 × D, 1 × N, 1 × − |
-| C2 | Ndalohet N → D (pa pushim pas natës) |
-| C3 | Maksimum 4 ditë pune radhazi |
-| C4 | Maksimum 2 netë radhazi |
-| C5 | Blloku i punës zgjat të paktën 2 ditë |
+| | Kufizimi | Në kod |
+|---|---|---|
+| C1 | Çdo ditë: 1 × D, 1 × N, 1 × pushim | `permutations("DN-")` |
+| C2 | Ndalohet natë → ditë (pa pushim pas natës) | `"ND" in x` |
+| C3 | Maksimum 2 netë radhazi | `"NNN" in x` |
+| C4 | Maksimum 4 ditë pune radhazi | `re.search("[DN]{5}", x)` |
 
 | Elementi | Përkufizimi |
 |---|---|
-| Variablat | Ditët (kolonat) 1..7 |
-| Domain-i | `3! = 6` permutacione të `{D, N, −}` – plotëson C1 automatikisht |
-| Veprimi | Cakto permutacionin për ditën e radhës |
-| Landscape | `3^21 ≈ 1.05 × 10^10` pa kufizime; `6^7 = 279 936` me C1 |
+| **Variablat** | Ditët (kolonat) 1..7 |
+| **Domain-i** | `3! = 6` permutacione të `{D, N, −}`, që e plotëson C1 automatikisht |
+| **Veprimi** | Cakto ndërrimet e ditës së radhës për të 3 punëtorët |
+| **Landscape** | `3^21 ≈ 10^10` pa kufizime; `6^7 = 279 936` me C1 |
 
-Pema ndërtohet me **DFS + Backtracking**: degët që shkelin C2–C5 shfaqen me të kuqe dhe nuk zgjerohen; nyjet e bardha janë zgjeruar, por nënpema e tyre dështoi (backtrack).
-
-![Rotating Workforce Scheduling search tree](trees/rotating_workforce.png)
-
-Orari i gjetur:
+Pema ndërtohet me **DFS + Backtracking**. Çdo nyje tregon ndërrimet e ditës për punëtorët P1 P2 P3 (p.sh. `D-N` = P1 ditë, P2 pushim, P3 natë). Degët `[X]` e shkelin një kufizim dhe preren menjëherë.
 
 ```
-Java | Hë Ma Më En Pr Sh Di
----------------------------
-  1  |  D  D  D  -  N  N  -
-  2  |  N  N  -  D  D  D  N
-  3  |  -  -  N  N  -  -  D
+Start
+└── --dita 1--> DN-
+    └── --dita 2--> DN-
+        ├── --dita 3--> DN- [X]
+        └── --dita 3--> D-N
+            └── --dita 4--> DN-
+                ├── --dita 5--> DN- [X]
+                ├── --dita 5--> D-N [X]
+                ├── --dita 5--> ND- [X]
+                ├── --dita 5--> N-D [X]
+                ├── --dita 5--> -DN [X]
+                └── --dita 5--> -ND
+                    ├── --dita 6--> DN- [X]
+                    └── --dita 6--> D-N
+                        └── --dita 7--> DN- [GOAL]
 ```
 
-## 4.4 Ekzekutimi
+Shembuj prerjesh:
+- **Dita 3, `DN-` [X]**: P2 do të kishte `N N N`, 3 netë radhazi (C3).
+- **Dita 5, `DN-` [X]**: P1 do të kishte `D D D D D`, 5 ditë pune radhazi (C4).
 
-```bash
-python main.py trees              # gjeneron të tri pemët në docs/trees/
-python main.py trees --depth 4    # 8-puzzle me thellësi më të madhe
+**Orari i gjetur:**
+
+```
+Java 1: D D D D - D D
+Java 2: N N - N N - N
+Java 3: - - N - D N -
 ```
 
-Për PNG duhet [Graphviz](https://graphviz.org/download/) (`dot`). Pa të, ruhen vetëm `.dot` dhe `.txt`; skedari `.dot` mund të hapet edhe online, p.sh. në [GraphvizOnline](https://dreampuf.github.io/GraphvizOnline/).
+## 4.4 Pyetje të mundshme
+
+**Çka është search tree, dhe si dallon nga state space?** State space është bashkësia e të gjitha gjendjeve. Search tree është mënyra si një algoritëm i viziton ato, ku e njëjta gjendje mund të paraqitet disa herë (prandaj ka nyje `[përsëritur]`).
+
+**Pse BFS për 8-Puzzle dhe M&C?** BFS gjen zgjidhjen me më pak hapa (optimale), sepse çdo veprim kushton 1.
+
+**Pse DFS për Rotating Workforce?** Të gjitha zgjidhjet janë në thellësinë 7 (7 ditë), prandaj DFS + backtracking është më efikas.
+
+**Pse 8-Puzzle ka vetëm 181 440 gjendje dhe jo 9! = 362 880?** Gjysma e renditjeve nuk mund të arrihen me lëvizje të ligjshme (varet nga pariteti i numrit të inversioneve).
